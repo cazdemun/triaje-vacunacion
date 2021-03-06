@@ -1,8 +1,9 @@
 import React from 'react';
 import { Layout, Col, Row, Button, Input } from 'antd';
-import logo from './assets/logo_ocp.jpg'
+import logo from '../assets/logo_ocp.jpg'
+import vacunometro from '../assets/login_panel2.png'
 
-const { Content, Footer } = Layout
+const { Content } = Layout
 
 
 const LeftPanel = () => (
@@ -14,7 +15,6 @@ const LeftPanel = () => (
       alignItems: 'flex-start', padding: '0px 25px'
     }}>
       <div>Conoce si cumples con los requisitos para recibir la vacuna contra el COVID-19</div>
-      <div></div>
       <div>Documento de identidad</div>
       <Row style={{ display: 'flex', width: '100%' }} gutter={[16, 16]}>
         <Col span={18}>
@@ -36,11 +36,11 @@ const Login = () => (
   <Layout style={{ height: "100vh" }}>
     <Content style={{ minHeight: "100%" }}>
       <Row style={{ height: "100%" }}>
-        <Col span={12} style={{ backgroundColor: '#ffffff', display: 'flex', minHeight: "100%" }}>
+        <Col span={12} style={{ backgroundColor: '#ffffff', display: 'flex', height: "100%" }}>
           <LeftPanel />
         </Col>
-        <Col span={12} style={{ backgroundColor: "#ef3f47", minHeight: "100%" }}>
-          Hola en rojo
+        <Col span={12} style={{ backgroundColor: "#ef3f47", height: "100%", display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+          <img src={vacunometro} style={{ maxWidth: '75%' }} />
         </Col>
       </Row>
     </Content>
