@@ -1,0 +1,26 @@
+{
+  "files": {
+    "main.css": "/triaje-vacunacion/static/css/main.e72fd569.chunk.css",
+    "main.js": "/triaje-vacunacion/static/js/main.4adb0019.chunk.js",
+    "main.js.map": "/triaje-vacunacion/static/js/main.4adb0019.chunk.js.map",
+    "runtime-main.js": "/triaje-vacunacion/static/js/runtime-main.7e8b2bf0.js",
+    "runtime-main.js.map": "/triaje-vacunacion/static/js/runtime-main.7e8b2bf0.js.map",
+    "static/css/2.fc2db407.chunk.css": "/triaje-vacunacion/static/css/2.fc2db407.chunk.css",
+    "static/js/2.21c3a67c.chunk.js": "/triaje-vacunacion/static/js/2.21c3a67c.chunk.js",
+    "static/js/2.21c3a67c.chunk.js.map": "/triaje-vacunacion/static/js/2.21c3a67c.chunk.js.map",
+    "static/js/3.2e2ed5b8.chunk.js": "/triaje-vacunacion/static/js/3.2e2ed5b8.chunk.js",
+    "static/js/3.2e2ed5b8.chunk.js.map": "/triaje-vacunacion/static/js/3.2e2ed5b8.chunk.js.map",
+    "index.html": "/triaje-vacunacion/index.html",
+    "static/css/2.fc2db407.chunk.css.map": "/triaje-vacunacion/static/css/2.fc2db407.chunk.css.map",
+    "static/css/main.e72fd569.chunk.css.map": "/triaje-vacunacion/static/css/main.e72fd569.chunk.css.map",
+    "static/js/2.21c3a67c.chunk.js.LICENSE.txt": "/triaje-vacunacion/static/js/2.21c3a67c.chunk.js.LICENSE.txt",
+    "static/media/logo_ocp.0ca463a1.jpg": "/triaje-vacunacion/static/media/logo_ocp.0ca463a1.jpg"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.7e8b2bf0.js",
+    "static/css/2.fc2db407.chunk.css",
+    "static/js/2.21c3a67c.chunk.js",
+    "static/css/main.e72fd569.chunk.css",
+    "static/js/main.4adb0019.chunk.js"
+  ]
+}
