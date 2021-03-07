@@ -9,6 +9,7 @@ import {
   Link,
   Redirect
 } from "react-router-dom";
+import Proceso from './pages/Descarte';
 
 const App = () => (
   <Router>
@@ -16,17 +17,8 @@ const App = () => (
       <Route path="/login">
         <Login />
       </Route>
-      <Route path="/descarte">
-        Descarte
-      </Route>
-      <Route path="/evaluacion">
-        Evaluacion
-      </Route>
-      <Route path="/resultado">
-        Resultado
-      </Route>
-      <Route path="/consentimiento">
-        Consentimiento
+      <Route path="/proceso">
+        <Proceso />
       </Route>
       <Route path="/">
         {false ? <></> : <Redirect to={{ pathname: '/login' }} />}
