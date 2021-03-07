@@ -1,5 +1,5 @@
 import React from 'react';
-import { Layout, Button, Card, Col, Statistic, Divider, Row, Input } from 'antd';
+import { Layout, Button, Card, Col, Statistic, Divider, Row } from 'antd';
 import { SmileTwoTone } from '@ant-design/icons'
 
 const { Content } = Layout
@@ -47,10 +47,10 @@ const Resultado = ({ current, send }) => (
 export default Resultado;
 
 
-{/* <p style={{ margin: '10px 15px' }}>Ingresa tu correo electrónico y te enviaremos el resultado de tu evaluación de salud.</p>
-        <Row>
-          <Input style={{ margin: '0px 20px', borderRadius: '10px', flex: '1' }} />
-          <Button danger type='primary' size='large' style={{ borderRadius: '10px', height: '50px', width: '150px', fontWeight: 'bold' }} onClick={() => send('NEXT')}>
-            Enviar
-          </Button>
-        </Row> */}
+/* <p style={{ margin: '10px 15px' }}>Ingresa tu correo electrónico y te enviaremos el resultado de tu evaluación de salud.</p>
+    <Row>
+      <Input style={{ margin: '0px 20px', borderRadius: '10px', flex: '1' }} />
+      <Button danger type='primary' size='large' style={{ borderRadius: '10px', height: '50px', width: '150px', fontWeight: 'bold' }} onClick={() => send('NEXT')}>
+        Enviar
+      </Button>
+    </Row> */

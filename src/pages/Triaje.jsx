@@ -12,7 +12,7 @@ import Resultado from './Resultado';
 import Evaluacion from './Evaluacion';
 import Consentimiento from './Consentimiento';
 
-const { Content, Header, Footer } = Layout
+const { Header, Footer } = Layout
 
 // check state/context if logged from redirect
 
@@ -92,7 +92,7 @@ const Triaje = () => {
       })()}
       <Footer style={{ height: '50px', padding: '0px 50px', backgroundColor: 'transparent', display: 'flex' }}>
         <span style={{ flex: '1' }} >
-          <img src={logoFooter} style={{ height: '30px' }} />
+          <img src={logoFooter} alt='' style={{ height: '30px' }} />
         </span>
         <p style={{ margin: '0' }}>©2021 OpenCovid Perú - Todos los derechos reservados.</p>
       </Footer>

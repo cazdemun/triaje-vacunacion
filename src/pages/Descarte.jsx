@@ -3,7 +3,7 @@ import { Layout, Col, Row, Button, Card, Divider, Tooltip, Radio } from 'antd';
 
 import { QuestionCircleFilled } from '@ant-design/icons'
 
-const { Content, Header, Footer } = Layout
+const { Content } = Layout
 
 const Descarte = ({ current, send }) =>
   <Content style={{ display: 'flex', flexDirection: 'column' }}>

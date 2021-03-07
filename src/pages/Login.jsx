@@ -33,7 +33,7 @@ const loginMachine = Machine({
 
 const LeftPanel = ({ current, send }) => (
   <Col span={24} style={{ backgroundColor: '#ffffff', flex: '1', display: 'flex', flexDirection: 'column', margin: "50px 50px 25px 50px" }}>
-    <img src={logo} style={{ flex: 'none', width: '280px' }} />
+    <img src={logo} alt='open-covid-login-logo' style={{ flex: 'none', width: '280px' }} />
     <Col className='form-body' style={{
       flex: '1', padding: '0px 25px',
       display: 'flex', flexDirection: 'column',
@@ -73,7 +73,7 @@ const Login = () => {
             <LeftPanel {...{ current, send }} />
           </Col>
           <Col span={12} style={{ backgroundColor: "#ef3f47", height: "100%", display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-            <img src={vacunometro} style={{ maxWidth: '75%' }} />
+            <img src={vacunometro} alt='' style={{ maxWidth: '75%' }} />
           </Col>
         </Row>
       </Content>
