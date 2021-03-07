@@ -1,6 +1,6 @@
 import React from 'react';
 import { Layout, Steps } from 'antd';
-import { Machine, send } from 'xstate';
+import { Machine } from 'xstate';
 
 import logoFooter from '../assets/logo_footer.png'
 import bg from '../assets/bg.jpg'
@@ -74,9 +74,9 @@ export const triajeMachine = Machine({
       },
       ...descarteStates
     },
-    // descarte: { states: {  } }
     evaluacion: {
       on: {
+        PREV: 'descarte',
         NEXT: 'resultado'
       }
     },
@@ -88,7 +88,7 @@ export const triajeMachine = Machine({
     },
     consentimiento: {
       on: {
-        FINISH: 'loging' // I want this to be able just on consentimiento.confirmation
+        FINISH: 'loging.fromfinished' // I want this to be able just on consentimiento.confirmation
       },
       ...consentimientoStates
     },

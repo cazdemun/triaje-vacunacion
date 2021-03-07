@@ -1,10 +1,12 @@
 import React from 'react';
-import { Layout, Col, Row, Button, Input, Tooltip } from 'antd';
+import { Layout, Col, Row, Button, Input, Tooltip, Modal } from 'antd';
 
 import logo from '../assets/logo_ocp.jpg'
 import vacunometro from '../assets/login_panel2.png'
 import { Redirect } from 'react-router-dom';
 import { QuestionCircleFilled } from '@ant-design/icons'
+
+import iconoCalendario from '../assets/calendario_icono.png'
 
 const { Content } = Layout
 
@@ -16,6 +18,11 @@ const { Content } = Layout
 export const loginStates = {
   initial: 'inactive',
   states: {
+    fromfinished: {
+      on: {
+        CONFIRM: 'inactive'
+      }
+    },
     inactive: {
       on: {
         ENABLE: 'idle'
@@ -41,7 +48,8 @@ const LeftPanel = ({ current, send }) => (
           <Input style={{ borderRadius: '5px', height: '50px', flex: '1' }} onChange={() => send('ENABLE')} />
         </Col>
         <Col span={4}>
-          <Input style={{ borderRadius: '5px', height: '50px', flex: '1' }} disabled={current.matches('loging.inactive')} />
+          <Input style={{ borderRadius: '5px', height: '50px', flex: '1' }}
+            disabled={current.matches('loging.inactive') || current.matches('loging.fromfinished')} />
         </Col>
         <Col span={2}>
           <Tooltip title='Introduzca su código de identidad tal como se ve en la imagen.'><QuestionCircleFilled /></Tooltip>
@@ -50,7 +58,7 @@ const LeftPanel = ({ current, send }) => (
       <Button type='primary' size='large'
         style={{ borderRadius: '5px', height: '50px', width: '150px', fontWeight: 'bold' }}
         onClick={() => send('START_LOGIN')}
-        disabled={current.matches('loging.inactive')}>
+        disabled={current.matches('loging.inactive') || current.matches('loging.fromfinished')}>
         Siguiente
       </Button>
     </Col>
@@ -70,6 +78,25 @@ const Login = ({ current, send }) => current.matches('loging') ?
         </Col>
       </Row>
     </Content>
+    <Modal
+      centered
+      maskClosable={false}
+      closable={false}
+      visible={current.matches('loging.fromfinished')}
+      footer={
+        <Row style={{ justifyContent: 'center' }}>
+          <Button danger style={{ fontWeight: 'bold', borderRadius: '5px' }} size='large' key="submit" type="primary" onClick={() => send('CONFIRM')}>
+            Entendido
+          </Button>
+        </Row>
+      }
+    >
+      <Col style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <img src={iconoCalendario} alt='' style={{ height: '150px', margin: '0px 0px 20px 0px' }} />
+        <p style={{ fontWeight: 'bold', fontSize: '16px' }}>¡Ya completaste el triaje!</p>
+        <p style={{ width: '450px', textAlign: 'center' }}>Vuelve dentro de 21 días para saber si estas listo para la segunda dosis de vacunación.</p>
+      </Col>
+    </Modal>
   </Layout>)
   : <Redirect to={{ pathname: '/triaje' }} />
 
