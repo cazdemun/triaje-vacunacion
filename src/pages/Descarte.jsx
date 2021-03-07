@@ -17,7 +17,7 @@ const { Content, Header, Footer } = Layout
 
 // check state/context if logged from redirect
 
-const procesoMachine = Machine({
+const triajeMachine = Machine({
   id: 'toggle',
   initial: 'descarte',
   context: {
@@ -26,8 +26,10 @@ const procesoMachine = Machine({
     dni: '',
   },
   states: {
+    canceled: {},
     descarte: {
       on: {
+        CANCEL: 'canceled',
         NEXT: 'evaluacion'
       }
     },
@@ -39,7 +41,8 @@ const procesoMachine = Machine({
     },
     resultado: {
       on: {
-        NEXT: 'consentimiento'
+        PREV: 'evaluacion',
+        NEXT: 'consentimiento',
       }
     },
     consentimiento: {},
@@ -79,7 +82,7 @@ const Descarte = ({ current, send }) =>
         </Row>
       </Card>
       <Row>
-        <Button danger size='large' style={{ borderRadius: '10px', height: '50px', width: '150px', fontWeight: 'bold' }}>
+        <Button danger size='large' style={{ borderRadius: '10px', height: '50px', width: '150px', fontWeight: 'bold' }} onClick={() => send('CANCEL')}>
           Cancelar
         </Button>
         <div style={{ flex: '1' }} />
@@ -98,8 +101,8 @@ const currentStep = {
   'consentimiento': 3
 }
 
-const Proceso = () => {
-  const [current, send] = useMachine(procesoMachine);
+const Triaje = () => {
+  const [current, send] = useMachine(triajeMachine);
   return (
     <Layout style={{ minHeight: "100vh", backgroundImage: `url(${bg})`, backgroundSize: 'cover' }}>
       <Header style={{ display: 'flex', alignItems: 'center', height: '70px', backgroundColor: '#ffffff' }} >
@@ -121,6 +124,8 @@ const Proceso = () => {
             return <Resultado {...{ current, send }} />
           case 'consentimiento':
             return <Consentimiento {...{ current, send }} />
+          case 'canceled':
+            return <Redirect to={{ pathname: '/' }} />
           default:
             break;
         }
@@ -135,5 +140,5 @@ const Proceso = () => {
   );
 }
 
-export default Proceso;
+export default Triaje;
 
