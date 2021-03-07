@@ -39,6 +39,7 @@ const Consentimiento = ({ current, send }) => (
       </Col>
     </Content>
     <Modal
+      centered
       visible={current.matches('consentimiento.confirmation')}
       onCancel={() => send('CANCEL')}
       footer={

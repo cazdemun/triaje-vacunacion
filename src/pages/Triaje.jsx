@@ -1,7 +1,6 @@
 import React from 'react';
 import { Layout, Steps } from 'antd';
-import { useMachine } from '@xstate/react';
-import { Machine } from 'xstate';
+import { Machine, send } from 'xstate';
 
 import logoFooter from '../assets/logo_footer.png'
 import bg from '../assets/bg.jpg'
@@ -12,9 +11,27 @@ import Resultado from './Resultado';
 import Evaluacion from './Evaluacion';
 import Consentimiento from './Consentimiento';
 
+import { loginStates } from './Login'
+
 const { Header, Footer } = Layout
 
 // check state/context if logged from redirect
+
+const descarteStates = {
+  initial: 'confirmation',
+  states: {
+    idle: {
+      on: {
+        SEND_EMAIL: 'confirmation'
+      }
+    },
+    confirmation: {
+      on: {
+        ACCEPT: 'idle'
+      }
+    }
+  }
+};
 
 const consentimientoStates = {
   initial: 'idle',
@@ -32,10 +49,11 @@ const consentimientoStates = {
   }
 };
 
-const triajeMachine = Machine({
-  id: 'toggle',
-  initial: 'descarte',
+export const triajeMachine = Machine({
+  id: 'triaje',
+  initial: 'loging',
   context: {
+    logged: false,
     nombre: '',
     apellidos: '',
     dni: '',
@@ -43,11 +61,18 @@ const triajeMachine = Machine({
   states: {
     canceled: {},
     finished: {},
+    loging: {
+      on: {
+        START_LOGIN: 'descarte'
+      },
+      ...loginStates
+    },
     descarte: {
       on: {
-        CANCEL: 'canceled',
+        CANCEL: 'loging',
         NEXT: 'evaluacion'
-      }
+      },
+      ...descarteStates
     },
     // descarte: { states: {  } }
     evaluacion: {
@@ -63,7 +88,7 @@ const triajeMachine = Machine({
     },
     consentimiento: {
       on: {
-        FINISH: 'finished' // I want this to be able just on consentimiento.confirmation
+        FINISH: 'loging' // I want this to be able just on consentimiento.confirmation
       },
       ...consentimientoStates
     },
@@ -81,11 +106,7 @@ const currentStep = (current) => {
     return 3;
 }
 
-const Triaje = () => {
-  const [current, send] = useMachine(triajeMachine);
-
-  console.log(current.value)
-
+const Triaje = ({ current, send }) => {
   return (
     <Layout style={{ minHeight: "100vh", backgroundImage: `url(${bg})`, backgroundSize: 'cover' }}>
       <Header style={{ display: 'flex', alignItems: 'center', height: '70px', backgroundColor: '#ffffff' }} >
@@ -99,8 +120,6 @@ const Triaje = () => {
   </Header>
       {(() => {
         switch (current.value) {
-          case 'descarte':
-            return <Descarte {...{ current, send }} />
           case 'evaluacion':
             return <Evaluacion {...{ current, send }} />
           case 'resultado':
@@ -112,7 +131,9 @@ const Triaje = () => {
             break;
         }
       })()}
+      {current.matches('descarte') ? <Descarte {...{ current, send }} /> : <></>}
       {current.matches('consentimiento') ? <Consentimiento {...{ current, send }} /> : <></>}
+      {current.matches('loging') ? <Redirect to={{ pathname: '/' }} /> : <></>}
       <Footer style={{ height: '50px', padding: '0px 50px', backgroundColor: 'transparent', display: 'flex' }}>
         <span style={{ flex: '1' }} >
           <img src={logoFooter} alt='' style={{ height: '30px' }} />

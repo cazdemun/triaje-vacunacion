@@ -10,20 +10,29 @@ import {
 } from "react-router-dom";
 import Triaje from './pages/Triaje';
 
-const App = () => (
-  <Router>
-    <Switch>
-      <Route path="/login">
-        <Login />
-      </Route>
-      <Route path="/triaje">
-        <Triaje />
-      </Route>
-      <Route path="/">
-        {false ? <></> : <Redirect to={{ pathname: '/login' }} />}
-      </Route>
-    </Switch>
-  </Router>
-);
+import { useMachine } from '@xstate/react';
+import { triajeMachine } from './pages/Triaje';
+
+const App = () => {
+  const [current, send] = useMachine(triajeMachine);
+
+  console.log(current.value)
+
+  return (
+    <Router>
+      <Switch>
+        <Route path="/login">
+          <Login {...{ current, send }}/>
+        </Route>
+        <Route path="/triaje">
+          <Triaje {...{ current, send }}/>
+        </Route>
+        <Route path="/">
+          {false ? <></> : <Redirect to={{ pathname: '/login' }} />}
+        </Route>
+      </Switch>
+    </Router>
+  );
+}
 
 export default App;

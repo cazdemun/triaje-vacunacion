@@ -1,11 +1,13 @@
 import React from 'react';
-import { Layout, Col, Row, Button, Card, Divider, Tooltip, Radio } from 'antd';
+import { Layout, Col, Row, Button, Card, Divider, Tooltip, Radio, Modal } from 'antd';
 
 import { QuestionCircleFilled } from '@ant-design/icons'
 
+import iconoDeclaracion from '../assets/declaracion_icono.png'
+
 const { Content } = Layout
 
-const Descarte = ({ current, send }) =>
+const Descarte = ({ current, send }) => <>
   <Content style={{ display: 'flex', flexDirection: 'column' }}>
     <Col offset={3} span={18} style={{ flex: '1', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
       <Card style={{
@@ -48,6 +50,26 @@ const Descarte = ({ current, send }) =>
       </Row>
     </Col>
   </Content >
+  <Modal
+    centered
+    maskClosable={false}
+    closable={false}
+    visible={current.matches('descarte.confirmation')}
+    footer={
+      <Row style={{ justifyContent: 'center' }}>
+        <Button danger style={{ fontWeight: 'bold', borderRadius: '5px' }} size='large' key="submit" type="primary" onClick={() => send('ACCEPT')}>
+          Entendido
+          </Button>
+      </Row>
+    }
+  >
+    <Col style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+      <img src={iconoDeclaracion} alt='' style={{ height: '150px', margin: '0px 0px 20px 0px' }} />
+      <p style={{ fontWeight: 'bold', fontSize: '16px' }}>Bienvenido a tu Evaluación de Salud antes de recibir la Vacuna</p>
+      <p style={{ width: '450px', textAlign: 'center' }}>Antes de iniciar tu evaluación recuerda que esta información tiene <span style={{ fontWeight: 'bold' }}>Carácter de declaración jurada</span> y solo puede ser llenada una sola vez.</p>
+    </Col>
+  </Modal>
+</>
 
 export default Descarte;
 
