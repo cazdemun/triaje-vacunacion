@@ -111,7 +111,7 @@ export const triajeMachine = Machine({
     },
     consentimiento: {
       on: {
-        FINISH: 'loging.fromfinished' // I want this to be able just on consentimiento.confirmation
+        FINISH: 'loging.inactive' // I want this to be able just on consentimiento.confirmation // loging.fromFinished
       },
       ...consentimientoStates
     },

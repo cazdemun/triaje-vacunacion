@@ -22,8 +22,8 @@ const QuestionWithTextArea1 = () => {
   return <>
     <Row style={{ display: "flex", alignItems: "center" }}>
       <p style={{ margin: "0px 100px 0px 0px", flex: "1" }}>
-        ¿Tienes leucemia, cáncer o alguna enfermedad que afecte la efectividad de la vacuna?
-          </p>
+        ¿Es alérgico a algún medicamento, alimento, vacuna o al látex?
+      </p>
       <Radio.Group buttonStyle="solid">
         <Radio.Button style={{ width: "45px" }} value="yes" onClick={() => setTextAreaEnabled(true)}>
           Si
