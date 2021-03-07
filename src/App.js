@@ -6,10 +6,9 @@ import {
   Switch,
   // useRouteMatch,
   Route,
-  Link,
   Redirect
 } from "react-router-dom";
-import Proceso from './pages/Descarte';
+import Triaje from './pages/Triaje';
 
 const App = () => (
   <Router>
@@ -17,8 +16,8 @@ const App = () => (
       <Route path="/login">
         <Login />
       </Route>
-      <Route path="/proceso">
-        <Proceso />
+      <Route path="/triaje">
+        <Triaje />
       </Route>
       <Route path="/">
         {false ? <></> : <Redirect to={{ pathname: '/login' }} />}

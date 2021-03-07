@@ -78,7 +78,7 @@ const Login = () => {
         </Row>
       </Content>
     </Layout>)
-    : <Redirect to={{ pathname: '/proceso' }} />
+    : <Redirect to={{ pathname: '/triaje' }} />
 }
 
 export default Login;
