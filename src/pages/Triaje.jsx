@@ -75,10 +75,13 @@ export const triajeMachine = Machine({
   id: 'triaje',
   initial: 'loging',
   context: {
-    logged: false,
     nombre: '',
     apellidos: '',
     dni: '',
+    cui: '',
+    error: '',
+    //
+    logged: false,
   },
   states: {
     canceled: {},
@@ -91,7 +94,7 @@ export const triajeMachine = Machine({
     },
     descarte: {
       on: {
-        CANCEL: 'loging',
+        CANCEL: 'loging.idle',
         NEXT: 'evaluacion'
       },
       ...descarteStates

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Layout, Col, Row, Button, Input, Tooltip, Modal } from 'antd';
+import { Layout, Col, Row, Button, Input, Tooltip, Modal, Form } from 'antd';
 
 import logo from '../assets/logo_ocp.jpg'
 import vacunometro from '../assets/login_panel2.png'
@@ -8,12 +8,25 @@ import { QuestionCircleFilled } from '@ant-design/icons'
 
 import iconoCalendario from '../assets/calendario_icono.png'
 
+import { assign, send } from 'xstate'
+
 const { Content } = Layout
 
 // check state/context if logged from redirect
 // logged: inactive -> loading -> logged
 // load info and pass to context
 // on redirect pass info from dni to state
+
+const fetchUser = (dni, cui) => new Promise((resolve, reject) => {
+  console.log(dni, cui)
+  setTimeout(() => resolve({
+    dni: dni,
+    cui: cui,
+    nombre: 'Martha',
+    apellidos: 'Robles',
+    userid: '1',
+  }), 1500)
+})
 
 export const loginStates = {
   initial: 'inactive',
@@ -29,42 +42,93 @@ export const loginStates = {
       }
     },
     idle: {
+      on: {
+        FETCH: 'loading'
+      }
+    },
+    loading: {
+      invoke: {
+        id: 'getUser',
+        src: (context, event) => fetchUser(event.dni, event.cui),
+        onDone: {
+          actions: [
+            assign({ dni: (context, event) => event.data.dni }),
+            assign({ cui: (context, event) => event.data.cui }),
+            assign({ nombre: (context, event) => event.data.nombre }),
+            assign({ apellidos: (context, event) => event.data.apellidos }),
+            assign({ userid: (context, event) => event.data.userid }),
+            send('START_LOGIN')
+          ]
+        },
+        onError: {
+          target: 'failure',
+          actions: assign({ error: (context, event) => event.data })
+        }
+      }
+    },
+    failure: {
+      on: {
+        RETURN: 'idle'
+      }
     }
   }
 };
 
-const LeftPanel = ({ current, send }) => (
-  <Col span={24} style={{ backgroundColor: '#ffffff', flex: '1', display: 'flex', flexDirection: 'column', margin: "50px 50px 25px 50px" }}>
-    <img src={logo} alt='open-covid-login-logo' style={{ flex: 'none', width: '280px' }} />
-    <Col className='form-body' style={{
-      flex: '1', padding: '0px 25px',
-      display: 'flex', flexDirection: 'column',
-      justifyContent: 'center', alignItems: 'flex-start'
-    }}>
-      <p style={{ fontWeight: 'bold', fontSize: '24px' }}>Conoce si cumples con los requisitos para recibir la vacuna contra el <span style={{ color: 'red' }}>COVID-19</span></p>
-      <div>Documento de identidad</div>
-      <Row style={{ display: 'flex', alignItems: 'center', margin: '10px 0px 25px 0px', width: '100%' }} gutter={[16, 16]}>
-        <Col span={18}>
-          <Input style={{ borderRadius: '5px', height: '50px', flex: '1' }} onChange={() => send('ENABLE')} />
-        </Col>
-        <Col span={4}>
-          <Input style={{ borderRadius: '5px', height: '50px', flex: '1' }}
-            disabled={current.matches('loging.inactive') || current.matches('loging.fromfinished')} />
-        </Col>
-        <Col span={2}>
-          <Tooltip title='Introduzca su código de identidad tal como se ve en la imagen.'><QuestionCircleFilled /></Tooltip>
-        </Col>
-      </Row>
-      <Button type='primary' size='large'
-        style={{ borderRadius: '5px', height: '50px', width: '150px', fontWeight: 'bold' }}
-        onClick={() => send('START_LOGIN')}
-        disabled={current.matches('loging.inactive') || current.matches('loging.fromfinished')}>
-        Siguiente
-      </Button>
-    </Col>
+const checkAllNumbers = s => s.split('').reduce((acc, x) => acc && (parseInt(x) >= 0), true)
+
+const LeftPanel = ({ current, send }) => {
+  const [form] = Form.useForm();
+
+  return (
+    <Col span={24} style={{ backgroundColor: '#ffffff', flex: '1', display: 'flex', flexDirection: 'column', margin: "50px 50px 25px 50px" }}>
+      <img src={logo} alt='open-covid-login-logo' style={{ flex: 'none', width: '280px' }} />
+      <Col className='form-body' style={{
+        flex: '1', padding: '0px 25px',
+        display: 'flex', flexDirection: 'column',
+        justifyContent: 'center', alignItems: 'flex-start'
+      }}>
+        <p style={{ fontWeight: 'bold', fontSize: '24px' }}>Conoce si cumples con los requisitos para recibir la vacuna contra el <span style={{ color: 'red' }}>COVID-19</span></p>
+        <div>Documento de identidad</div>
+        <Form form={form} onFinish={(values) => send('FETCH', { dni: values.dni, cui: values.cui })}>
+          <Row style={{ display: 'flex', alignItems: 'start', margin: '10px 0px 25px 0px', width: '100%' }} gutter={[16, 16]}>
+            <Col span={18}>
+              <Form.Item name="dni" initialValue={current.context.dni} rules={[
+                { required: true, message: 'Por favor ingresa tu DNI' },
+                { validator: (_, value) => value.length === 8 ? Promise.resolve(value) : Promise.reject(), message: 'El DNI debe tener 8 dígitos' },
+                { validator: (_, value) => checkAllNumbers(value) ? Promise.resolve(value) : Promise.reject(), message: 'El DNI debe ser solo dígitos' }
+              ]}>
+                <Input style={{ borderRadius: '5px', height: '50px', flex: '1' }} onChange={() => send('ENABLE')}
+                  disabled={current.matches('loging.loading')} />
+              </Form.Item>
+            </Col>
+            <Col span={4}>
+              <Form.Item name="cui" rules={[
+                { required: true, message: 'Y el CUI' },
+                { validator: (_, value) => value.length === 1 ? Promise.resolve(value) : Promise.reject(), message: 'Solo 1 dígito' },
+                { validator: (_, value) => checkAllNumbers(value) ? Promise.resolve(value) : Promise.reject(), message: 'Solo dígitos' }
+              ]}>
+                <Input style={{ borderRadius: '5px', height: '50px', flex: '1' }}
+                  disabled={current.matches('loging.inactive') || current.matches('loging.fromfinished') || current.matches('loging.loading')} />
+              </Form.Item>
+            </Col>
+            <Col span={2} style={{ height: '50px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Tooltip title='Introduzca su código de identidad tal como se ve en la imagen.'><QuestionCircleFilled /></Tooltip>
+            </Col>
+          </Row>
+          <Form.Item >
+            <Button type='primary' size='large' htmlType="submit"
+              loading={current.matches('loging.loading')}
+              style={{ borderRadius: '5px', height: '50px', width: '150px', fontWeight: 'bold' }}
+              disabled={current.matches('loging.inactive') || current.matches('loging.fromfinished')}>
+              Siguiente
+            </Button>
+          </Form.Item>
+        </Form>
+      </Col>
     ©2021 OpenCovid Perú - Todos los derechos reservados.
-  </Col>
-)
+    </Col>
+  )
+}
 
 const Login = ({ current, send }) => current.matches('loging') ?
   (<Layout style={{ height: "100vh" }}>
