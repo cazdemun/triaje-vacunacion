@@ -1,11 +1,12 @@
 import React from 'react';
-import { Layout, Col, Row, Button, Input } from 'antd';
+import { Layout, Col, Row, Button, Input, Tooltip } from 'antd';
 import { useMachine } from '@xstate/react';
 import { Machine } from 'xstate';
 
 import logo from '../assets/logo_ocp.jpg'
 import vacunometro from '../assets/login_panel2.png'
 import { Redirect } from 'react-router-dom';
+import { QuestionCircleFilled } from '@ant-design/icons'
 
 const { Content } = Layout
 
@@ -31,30 +32,31 @@ const loginMachine = Machine({
 });
 
 const LeftPanel = ({ current, send }) => (
-  <Col span={24} style={{ backgroundColor: '#ffffff', flex: '1', display: 'flex', flexDirection: 'column', margin: "50px" }}>
+  <Col span={24} style={{ backgroundColor: '#ffffff', flex: '1', display: 'flex', flexDirection: 'column', margin: "50px 50px 25px 50px" }}>
     <img src={logo} style={{ flex: 'none', width: '280px' }} />
     <Col className='form-body' style={{
       flex: '1', padding: '0px 25px',
       display: 'flex', flexDirection: 'column',
       justifyContent: 'center', alignItems: 'flex-start'
     }}>
-      <div>Conoce si cumples con los requisitos para recibir la vacuna contra el COVID-19</div>
+      <p style={{ fontWeight: 'bold', fontSize: '24px' }}>Conoce si cumples con los requisitos para recibir la vacuna contra el <span style={{ color: 'red' }}>COVID-19</span></p>
       <div>Documento de identidad</div>
-      <Row style={{ display: 'flex', width: '100%' }} gutter={[16, 16]}>
+      <Row style={{ display: 'flex', alignItems: 'center', margin: '10px 0px 25px 0px', width: '100%' }} gutter={[16, 16]}>
         <Col span={18}>
-          <Input style={{ flex: '1' }} />
+          <Input style={{ borderRadius: '10px', height: '50px', flex: '1' }} />
         </Col>
         <Col span={4}>
-          <Input style={{ flex: '1' }} />
+          <Input style={{ borderRadius: '10px', height: '50px', flex: '1' }} />
         </Col>
         <Col span={2}>
-          ?
+          <Tooltip title='Introduzca su código de identidad tal como se ve en la imagen.'><QuestionCircleFilled /></Tooltip> 
         </Col>
       </Row>
-      <Button onClick={() => send('START_LOGIN')}>
+      <Button type='primary' size='large' style={{ borderRadius: '10px', height: '50px', width: '150px', fontWeight: 'bold' }} onClick={() => send('START_LOGIN')}>
         Siguiente
       </Button>
     </Col>
+    ©2021 OpenCovid Perú - Todos los derechos reservados.
   </Col>
 )
 
