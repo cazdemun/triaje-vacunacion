@@ -33,6 +33,28 @@ const descarteStates = {
   }
 };
 
+const evaluacionStates = {
+  initial: 'firstquestion',
+  states: {
+    firstquestion: {
+      on: {
+        NEXT: 'secondquestion'
+      }
+    },
+    secondquestion: {
+      on: {
+        PREV: 'firstquestion',
+        NEXT: 'thirdquestion'
+      }
+    },
+    thirdquestion: {
+      on: {
+        PREV: 'secondquestion'
+      }
+    }
+  }
+};
+
 const consentimientoStates = {
   initial: 'idle',
   states: {
@@ -76,13 +98,14 @@ export const triajeMachine = Machine({
     },
     evaluacion: {
       on: {
-        PREV: 'descarte',
+        PREV: 'descarte.idle',
         NEXT: 'resultado'
-      }
+      },
+      ...evaluacionStates
     },
     resultado: {
       on: {
-        PREV: 'evaluacion',
+        PREV: 'evaluacion.thirdquestion',
         NEXT: 'consentimiento',
       }
     },
@@ -120,8 +143,6 @@ const Triaje = ({ current, send }) => {
   </Header>
       {(() => {
         switch (current.value) {
-          case 'evaluacion':
-            return <Evaluacion {...{ current, send }} />
           case 'resultado':
             return <Resultado {...{ current, send }} />
           case 'canceled':
@@ -131,6 +152,7 @@ const Triaje = ({ current, send }) => {
             break;
         }
       })()}
+      {current.matches('evaluacion') ? <Evaluacion {...{ current, send }} /> : <></>}
       {current.matches('descarte') ? <Descarte {...{ current, send }} /> : <></>}
       {current.matches('consentimiento') ? <Consentimiento {...{ current, send }} /> : <></>}
       {current.matches('loging') ? <Redirect to={{ pathname: '/' }} /> : <></>}
