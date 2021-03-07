@@ -50,7 +50,7 @@ const Consentimiento = ({ current, send }) => (
       }
     >
       <Col style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-        <img src={iconoConfirmacion} style={{ height: '150px', margin: '0px 0px 20px 0px' }} />
+        <img src={iconoConfirmacion} alt='' style={{ height: '150px', margin: '0px 0px 20px 0px' }} />
         <p style={{ textAlign: 'center' }}>Información enviada al correo <br /> <span style={{ fontWeight: 'bold', color: 'red', }}>mariarobles@gmail.com</span></p>
         <p style={{ fontWeight: 'bold', fontSize: '16px' }}>¡Gracias por participar de #YoMeVacuno!</p>
         <p style={{ width: '450px', textAlign: 'center' }}>Recuerda que debes llevar impreso el resultado de tu Evaluación de Salud y el Consentimiento para recibir la vacuna el día que acudas a vacunarte.</p>
