@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/triaje-vacunacion/static/css/main.e72fd569.chunk.css",
-    "main.js": "/triaje-vacunacion/static/js/main.c44860f0.chunk.js",
-    "main.js.map": "/triaje-vacunacion/static/js/main.c44860f0.chunk.js.map",
+    "main.js": "/triaje-vacunacion/static/js/main.eddaae0c.chunk.js",
+    "main.js.map": "/triaje-vacunacion/static/js/main.eddaae0c.chunk.js.map",
     "runtime-main.js": "/triaje-vacunacion/static/js/runtime-main.ae159a46.js",
     "runtime-main.js.map": "/triaje-vacunacion/static/js/runtime-main.ae159a46.js.map",
     "static/css/2.fc2db407.chunk.css": "/triaje-vacunacion/static/css/2.fc2db407.chunk.css",
@@ -27,6 +27,6 @@
     "static/css/2.fc2db407.chunk.css",
     "static/js/2.4638b013.chunk.js",
     "static/css/main.e72fd569.chunk.css",
-    "static/js/main.c44860f0.chunk.js"
+    "static/js/main.eddaae0c.chunk.js"
   ]
 }
