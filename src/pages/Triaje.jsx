@@ -16,6 +16,22 @@ const { Header, Footer } = Layout
 
 // check state/context if logged from redirect
 
+const consentimientoStates = {
+  initial: 'idle',
+  states: {
+    idle: {
+      on: {
+        SEND_EMAIL: 'confirmation'
+      }
+    },
+    confirmation: {
+      on: {
+        CANCEL: 'idle'
+      }
+    }
+  }
+};
+
 const triajeMachine = Machine({
   id: 'toggle',
   initial: 'descarte',
@@ -47,26 +63,34 @@ const triajeMachine = Machine({
     },
     consentimiento: {
       on: {
-        FINISH: 'finished'
-      }
+        FINISH: 'finished' // I want this to be able just on consentimiento.confirmation
+      },
+      ...consentimientoStates
     },
   }
 });
 
-const currentStep = {
-  'descarte': 0,
-  'evaluacion': 1,
-  'resultado': 2,
-  'consentimiento': 3
+const currentStep = (current) => {
+  if (current.matches('descarte'))
+    return 0;
+  if (current.matches('evaluacion'))
+    return 1;
+  if (current.matches('resultado'))
+    return 2;
+  if (current.matches('consentimiento'))
+    return 3;
 }
 
 const Triaje = () => {
   const [current, send] = useMachine(triajeMachine);
+
+  console.log(current.value)
+
   return (
     <Layout style={{ minHeight: "100vh", backgroundImage: `url(${bg})`, backgroundSize: 'cover' }}>
       <Header style={{ display: 'flex', alignItems: 'center', height: '70px', backgroundColor: '#ffffff' }} >
         <h1 style={{ flex: '1' }}>Hola, <b>María Robles</b></h1>
-        <Steps style={{ flex: '2' }} current={currentStep[current.value]} size='small'>
+        <Steps style={{ flex: '2' }} current={currentStep(current)} size='small'>
           <Steps.Step title="Descarte Covid-19" />
           <Steps.Step title="Evaluación Pre-Vacunación" />
           <Steps.Step title="Resultado de Evaluación" />
@@ -81,8 +105,6 @@ const Triaje = () => {
             return <Evaluacion {...{ current, send }} />
           case 'resultado':
             return <Resultado {...{ current, send }} />
-          case 'consentimiento':
-            return <Consentimiento {...{ current, send }} />
           case 'canceled':
           case 'finished':
             return <Redirect to={{ pathname: '/' }} />
@@ -90,6 +112,7 @@ const Triaje = () => {
             break;
         }
       })()}
+      {current.matches('consentimiento') ? <Consentimiento {...{ current, send }} /> : <></>}
       <Footer style={{ height: '50px', padding: '0px 50px', backgroundColor: 'transparent', display: 'flex' }}>
         <span style={{ flex: '1' }} >
           <img src={logoFooter} alt='' style={{ height: '30px' }} />

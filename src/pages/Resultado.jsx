@@ -32,11 +32,11 @@ const Resultado = ({ current, send }) => (
         </Row>
       </Card >
       <Row>
-        <Button danger size='large' style={{ borderRadius: '10px', height: '50px', width: '150px', fontWeight: 'bold' }} onClick={() => send('PREV')}>
+        <Button danger size='large' style={{ borderRadius: '5px', height: '50px', width: '150px', fontWeight: 'bold' }} onClick={() => send('PREV')}>
           Anterior
         </Button>
         <div style={{ flex: '1' }} />
-        <Button danger type='primary' size='large' style={{ borderRadius: '10px', height: '50px', width: '150px', fontWeight: 'bold' }} onClick={() => send('NEXT')}>
+        <Button danger type='primary' size='large' style={{ borderRadius: '5px', height: '50px', width: '150px', fontWeight: 'bold' }} onClick={() => send('NEXT')}>
           Siguiente
         </Button>
       </Row>

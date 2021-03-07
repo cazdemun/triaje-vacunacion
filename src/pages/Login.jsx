@@ -43,16 +43,16 @@ const LeftPanel = ({ current, send }) => (
       <div>Documento de identidad</div>
       <Row style={{ display: 'flex', alignItems: 'center', margin: '10px 0px 25px 0px', width: '100%' }} gutter={[16, 16]}>
         <Col span={18}>
-          <Input style={{ borderRadius: '10px', height: '50px', flex: '1' }} />
+          <Input style={{ borderRadius: '5px', height: '50px', flex: '1' }} />
         </Col>
         <Col span={4}>
-          <Input style={{ borderRadius: '10px', height: '50px', flex: '1' }} />
+          <Input style={{ borderRadius: '5px', height: '50px', flex: '1' }} />
         </Col>
         <Col span={2}>
           <Tooltip title='Introduzca su código de identidad tal como se ve en la imagen.'><QuestionCircleFilled /></Tooltip> 
         </Col>
       </Row>
-      <Button type='primary' size='large' style={{ borderRadius: '10px', height: '50px', width: '150px', fontWeight: 'bold' }} onClick={() => send('START_LOGIN')}>
+      <Button type='primary' size='large' style={{ borderRadius: '5px', height: '50px', width: '150px', fontWeight: 'bold' }} onClick={() => send('START_LOGIN')}>
         Siguiente
       </Button>
     </Col>
