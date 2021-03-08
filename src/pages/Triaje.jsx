@@ -12,17 +12,41 @@ import Evaluacion from './Evaluacion';
 import Consentimiento from './Consentimiento';
 
 import { loginStates } from './Login'
+import { backend } from '../Constants'
 
 const { Header, Footer } = Layout
 
 // check state/context if logged from redirect
 
-// Promise.all()
-// .then( fetch)
-
 const fetchResults = (usuario_id, respuestas1, respuestas2) => new Promise((resolve, reject) => {
-  setTimeout(() => resolve(true), 1500)
+  // https://secret-cove-62745.herokuapp.com/api/respuesta1?usuario_id=14&pregunta_id=4&respuesta=SI&detalle=enfermo
+  const respuestas1Promises = respuestas1.map(x =>{
+    console.log(backend + `respuesta1?usuario_id=${usuario_id}&pregunta_id=${x.pregunta_id}&respuesta=${x.respuesta}&detalle=enfermo`)
+    return fetch(backend + `respuesta1?usuario_id=${usuario_id}&pregunta_id=${x.pregunta_id}&respuesta=${x.respuesta}&detalle=enfermo`,
+    {
+      method: 'POST'
+    })
+  }
+  )
+  const respuestas2Promises = respuestas2.map(x =>
+    fetch(backend + `respuesta2?usuario_id=${usuario_id}&pregunta_id=${x.pregunta_id}&respuesta=${x.respuesta}&detalle=${x.detalle ? x.detalle : 'dummy'}`,
+      {
+        method: 'POST'
+      })
+  )
+  Promise.all([...respuestas1Promises, ...respuestas2Promises])
+    .then(_ => fetch(backend + `resultados/${usuario_id}`))
+    .then(res => res.json())
+    .then(res => {
+      console.log('resulatados JSON', res)
+      resolve(res)
+    })
+    .catch(err => reject(err))
 })
+
+// const fetchResults = (usuario_id, respuestas1, respuestas2) => new Promise((resolve, reject) => {
+//   setTimeout(() => resolve(true), 1500)
+// })
 
 const descarteStates = {
   initial: 'confirmation',
@@ -99,12 +123,12 @@ const evaluacionStates = {
           actions: [
             assign({
               respuestas2: (context, event) => {
-                console.log(Object.keys(event.data)
+                const newAnswers = Object.keys(event.data)
                   .map(k => ({
                     pregunta_id: k.toString(),
                     respuesta: event.data[k],
-                  })))
-                return [...context.respuestas2]
+                  }))
+                return [...context.respuestas2, ...newAnswers]
               }
             })
           ],
@@ -115,7 +139,7 @@ const evaluacionStates = {
     loading: {
       invoke: {
         id: 'getResults',
-        src: (context, event) => fetchResults(event.dni, event.cui),
+        src: (context, event) => fetchResults(context.usuario_id, context.respuestas1, context.respuestas2),
         onDone: {
           actions: [
             assign({ results: (context, event) => event.data.results }),

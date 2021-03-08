@@ -141,7 +141,7 @@ const Evaluacion = ({ current, send }) => {
                   </Row>
                 </Form.Item >
                 <Divider />
-                <Form.Item name='34' rules={[{ required: true, message: 'Por favor, seleccione una opción.' }]}>
+                <Form.Item name='44' rules={[{ required: true, message: 'Por favor, seleccione una opción.' }]}>
                   <Row style={{ display: "flex", alignItems: "center" }}>
                     <p style={{ margin: "0px 100px 0px 0px", flex: "1" }}>
                       ¿Convive con personas de edad avanzada o alguna persona con cáncer, trasplantes, recibe quimioterapia corticoide o alguna otra circunstancia que afecte a la inmunidad?
