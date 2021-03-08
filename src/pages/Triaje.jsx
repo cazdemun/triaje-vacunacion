@@ -1,6 +1,6 @@
 import React from 'react';
 import { Layout, Steps } from 'antd';
-import { Machine } from 'xstate';
+import { assign, send, Machine } from 'xstate';
 
 import logoFooter from '../assets/logo_footer.png'
 import bg from '../assets/bg.jpg'
@@ -16,6 +16,13 @@ import { loginStates } from './Login'
 const { Header, Footer } = Layout
 
 // check state/context if logged from redirect
+
+// Promise.all()
+// .then( fetch)
+
+const fetchResults = (usuario_id, respuestas1, respuestas2) => new Promise((resolve, reject) => {
+  setTimeout(() => resolve(true), 1500)
+})
 
 const descarteStates = {
   initial: 'confirmation',
@@ -38,18 +45,86 @@ const evaluacionStates = {
   states: {
     firstquestion: {
       on: {
-        NEXT: 'secondquestion'
+        NEXT: {
+          actions: [assign({
+            respuestas2: (context, event) => {
+              const someAnswer = Object.keys(event.data).reduce((acc, k) => {
+                if (k === 'detalle')
+                  return { ...acc, detalle: event.data['detalle'] }
+                else
+                  return {
+                    ...acc,
+                    pregunta_id: k.toString(),
+                    respuesta: event.data[k],
+                  }
+              }, {})
+              console.log('event', event)
+              console.log('someAnswer', someAnswer)
+              return [...context.respuestas2.filter(x => x.pregunta_id !== someAnswer.pregunta_id), someAnswer]
+            }
+          })],
+          target: 'secondquestion'
+        }
       }
     },
     secondquestion: {
       on: {
         PREV: 'firstquestion',
-        NEXT: 'thirdquestion'
+        NEXT: {
+          actions: [assign({
+            respuestas2: (context, event) => {
+              const someAnswer = Object.keys(event.data).reduce((acc, k) => {
+                if (k === 'detalle')
+                  return { ...acc, detalle: event.data['detalle'] }
+                else
+                  return {
+                    ...acc,
+                    pregunta_id: k.toString(),
+                    respuesta: event.data[k],
+                  }
+              }, {})
+              console.log('event', event)
+              console.log('someAnswer', someAnswer)
+              return [...context.respuestas2.filter(x => x.pregunta_id !== someAnswer.pregunta_id), someAnswer]
+            }
+          })],
+          target: 'thirdquestion'
+        }
       }
     },
     thirdquestion: {
       on: {
-        PREV: 'secondquestion'
+        PREV: 'secondquestion',
+        NEXT: {
+          actions: [
+            assign({
+              respuestas2: (context, event) => {
+                console.log(Object.keys(event.data)
+                  .map(k => ({
+                    pregunta_id: k.toString(),
+                    respuesta: event.data[k],
+                  })))
+                return [...context.respuestas2]
+              }
+            })
+          ],
+          target: 'loading'
+        }
+      }
+    },
+    loading: {
+      invoke: {
+        id: 'getResults',
+        src: (context, event) => fetchResults(event.dni, event.cui),
+        onDone: {
+          actions: [
+            assign({ results: (context, event) => event.data.results }),
+            send('RESULT')
+          ]
+        },
+        onError: {
+          actions: [assign({ error: (context, event) => event.data }), send('RESULTS')]
+        }
       }
     }
   }
@@ -79,6 +154,10 @@ export const triajeMachine = Machine({
     apellidos: '',
     dni: '',
     cui: '',
+    usuario_id: '',
+    respuestas1: [],
+    respuestas2: [],
+    results: true,
     error: '',
     //
     logged: false,
@@ -95,14 +174,25 @@ export const triajeMachine = Machine({
     descarte: {
       on: {
         CANCEL: 'loging.idle',
-        NEXT: 'evaluacion'
+        NEXT: {
+          actions: [
+            assign({
+              respuestas1: (context, event) => Object.keys(event.data)
+                .map(k => ({
+                  pregunta_id: k.toString(),
+                  respuesta: event.data[k],
+                }))
+            })
+          ],
+          target: 'evaluacion'
+        }
       },
       ...descarteStates
     },
     evaluacion: {
       on: {
         PREV: 'descarte.idle',
-        NEXT: 'resultado'
+        RESULT: 'resultado'
       },
       ...evaluacionStates
     },
@@ -114,7 +204,7 @@ export const triajeMachine = Machine({
     },
     consentimiento: {
       on: {
-        FINISH: 'loging.inactive' // I want this to be able just on consentimiento.confirmation // loging.fromFinished
+        FINISH: 'loging.idle' // I want this to be able just on consentimiento.confirmation // loging.fromFinished
       },
       ...consentimientoStates
     },
@@ -136,7 +226,7 @@ const Triaje = ({ current, send }) => {
   return (
     <Layout style={{ minHeight: "100vh", backgroundImage: `url(${bg})`, backgroundSize: 'cover' }}>
       <Header style={{ display: 'flex', alignItems: 'center', height: '70px', backgroundColor: '#ffffff' }} >
-        <h1 style={{ flex: '1' }}>Hola, <b>María Robles</b></h1>
+        <h1 style={{ flex: '1' }}>Hola, <b style={{ fontSize: '18px' }}>{current.context.nombre}</b></h1>
         <Steps style={{ flex: '2' }} current={currentStep(current)} size='small'>
           <Steps.Step title="Descarte Covid-19" />
           <Steps.Step title="Evaluación Pre-Vacunación" />

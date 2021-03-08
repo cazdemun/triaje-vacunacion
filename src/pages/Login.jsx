@@ -9,6 +9,8 @@ import { QuestionCircleFilled } from '@ant-design/icons'
 import iconoCalendario from '../assets/calendario_icono.png'
 
 import { assign, send } from 'xstate'
+import { backend } from '../Constants'
+
 
 const { Content } = Layout
 
@@ -16,17 +18,37 @@ const { Content } = Layout
 // logged: inactive -> loading -> logged
 // load info and pass to context
 // on redirect pass info from dni to state
+// const fetchUser = (dni, cui) => new Promise((resolve, reject) => {
+//   console.log(dni, cui)
+//   setTimeout(() => resolve({
+//     dni: dni,
+//     cui: cui,
+//     nombre: 'Martha',
+//     apellidos: 'Robles',
+//     userid: '1',
+//   }), 1500)
+// })
 
-const fetchUser = (dni, cui) => new Promise((resolve, reject) => {
-  console.log(dni, cui)
-  setTimeout(() => resolve({
+const throwError = s => {
+  console.log(s)
+  throw new Error(s);
+}
+
+const fetchUser = (dni, cui) => fetch(backend + `registro?dni=${dni}&cui=${cui}`,
+  {
+    method: 'POST'
+  })
+  .then(res => res.json())
+  .then(res => { console.log(res); return res; })
+  // check for error here to show last modal (how do i make two errors, ternary logic on action: send('')?)
+  .then(res => res.status === 500 ? throwError('invalid dni i guess') : res)
+  .then(res => ({
     dni: dni,
     cui: cui,
-    nombre: 'Martha',
-    apellidos: 'Robles',
-    userid: '1',
-  }), 1500)
-})
+    nombre: res.name,
+    apellidos: res.apellido,
+    usuario_id: res.usuario_id,
+  }))
 
 export const loginStates = {
   initial: 'inactive',
@@ -56,12 +78,13 @@ export const loginStates = {
             assign({ cui: (context, event) => event.data.cui }),
             assign({ nombre: (context, event) => event.data.nombre }),
             assign({ apellidos: (context, event) => event.data.apellidos }),
-            assign({ userid: (context, event) => event.data.userid }),
+            assign({ usuario_id: (context, event) => event.data.usuario_id.toString() }),
             send('START_LOGIN')
           ]
         },
         onError: {
           target: 'failure',
+          // target: 'idle',
           actions: assign({ error: (context, event) => event.data })
         }
       }
@@ -94,8 +117,8 @@ const LeftPanel = ({ current, send }) => {
             <Col span={18}>
               <Form.Item name="dni" initialValue={current.context.dni} rules={[
                 { required: true, message: 'Por favor ingresa tu DNI' },
-                { validator: (_, value) => value.length === 8 ? Promise.resolve(value) : Promise.reject(), message: 'El DNI debe tener 8 dígitos' },
-                { validator: (_, value) => checkAllNumbers(value) ? Promise.resolve(value) : Promise.reject(), message: 'El DNI debe ser solo dígitos' }
+                { validator: (_, value) => value.length === 8 ? Promise.resolve(value) : Promise.reject(''), message: 'El DNI debe tener 8 dígitos' },
+                { validator: (_, value) => checkAllNumbers(value) ? Promise.resolve(value) : Promise.reject(''), message: 'El DNI debe ser solo dígitos' }
               ]}>
                 <Input style={{ borderRadius: '5px', height: '50px', flex: '1' }} onChange={() => send('ENABLE')}
                   disabled={current.matches('loging.loading')} />
@@ -104,8 +127,8 @@ const LeftPanel = ({ current, send }) => {
             <Col span={4}>
               <Form.Item name="cui" rules={[
                 { required: true, message: 'Y el CUI' },
-                { validator: (_, value) => value.length === 1 ? Promise.resolve(value) : Promise.reject(), message: 'Solo 1 dígito' },
-                { validator: (_, value) => checkAllNumbers(value) ? Promise.resolve(value) : Promise.reject(), message: 'Solo dígitos' }
+                { validator: (_, value) => value ? (value.length === 1 ? Promise.resolve(value) : Promise.reject('')) : Promise.reject(''), message: 'Solo 1 dígito' },
+                { validator: (_, value) => value ? (checkAllNumbers(value) ? Promise.resolve(value) : Promise.reject('')) : Promise.reject(''), message: 'Solo dígitos' }
               ]}>
                 <Input style={{ borderRadius: '5px', height: '50px', flex: '1' }}
                   disabled={current.matches('loging.inactive') || current.matches('loging.fromfinished') || current.matches('loging.loading')} />
@@ -159,6 +182,25 @@ const Login = ({ current, send }) => current.matches('loging') ?
         <img src={iconoCalendario} alt='' style={{ height: '150px', margin: '0px 0px 20px 0px' }} />
         <p style={{ fontWeight: 'bold', fontSize: '16px' }}>¡Ya completaste el triaje!</p>
         <p style={{ width: '450px', textAlign: 'center' }}>Vuelve dentro de 21 días para saber si estas listo para la segunda dosis de vacunación.</p>
+      </Col>
+    </Modal>
+    <Modal
+      centered
+      maskClosable={false}
+      closable={false}
+      visible={current.matches('loging.failure')}
+      footer={
+        <Row style={{ justifyContent: 'center' }}>
+          <Button danger style={{ fontWeight: 'bold', borderRadius: '5px' }} size='large' key="submit" type="primary" onClick={() => send('RETURN')}>
+            Entendido
+          </Button>
+        </Row>
+      }
+    >
+      <Col style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <img src={iconoCalendario} alt='' style={{ height: '150px', margin: '0px 0px 20px 0px' }} />
+        <p style={{ fontWeight: 'bold', fontSize: '16px' }}>¡ERROR!</p>
+        <p style={{ width: '450px', textAlign: 'center' }}>Puede que el DNI o el CUI sean incorrectos</p>
       </Col>
     </Modal>
   </Layout>)

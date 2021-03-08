@@ -17,6 +17,7 @@ const App = () => {
   const [current, send] = useMachine(triajeMachine);
 
   console.log(current.value)
+  console.log(current.context.respuestas2)
 
   return (
     <Router>
